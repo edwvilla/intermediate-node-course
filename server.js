@@ -43,7 +43,23 @@ app.route('/users/:id')
 })
 // UPDATE
 .put((req,res)=>{
-  // User.findByIdAndUpdate()
+  const { name, email, password } = req.body.newData
+  User.findByIdAndUpdate(
+    req.params.id,
+    {
+      name,
+      email,
+      password
+    },
+    {
+      new: true,
+    },
+    (err, data) => {
+      if (err) return res.json({ success: false, message: err })
+      if (!data) return res.json({succes: false, message: "Not Found"})
+  
+      res.json({ succes: true,data: data })
+    })
 })
 // DELETE
 .delete((req,res)=>{

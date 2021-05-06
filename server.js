@@ -13,63 +13,39 @@ app.listen(port, ()=>{
 	console.log(`server is listening on port:${port}`)
 })
 
+const sendResponse = (res, err, data) => {
+  if (err) return res.json({success: false, message: err})
+  if (!data) return res.json({succes: false, data: "Not Found"})
+
+  res.json({succes: true, data: data})  
+}
+
 // CREATE
 app.post('/users',(req,res)=>{
-  const { name, email, password } = req.body.newData
   User.create(
-    {
-      name,
-      email,
-      password
-    },
-    (err, data) => {
-      if (err) return res.json({success: false, message: err})
-      if (!data) return res.json({succes: false, data: "Not Found"})
-
-      res.json({succes: true, data: data})  
-    }
+    {...req.body.newData},
+    (err, data) => sendResponse(res, err, data)
   )
 })
 
 app.route('/users/:id')
 // READ
 .get((req,res)=>{
-  User.findById(req.params.id, (err, data) => {
-    if (err) return res.json({ success: false, message: err })
-    if (!data) return res.json({succes: false, message: "Not Found"})
-
-    res.json({ succes: true,data: data })
-  })
+  User.findById(req.params.id, (err, data) => sendResponse(res, err, data))
 })
 // UPDATE
 .put((req,res)=>{
-  const { name, email, password } = req.body.newData
   User.findByIdAndUpdate(
     req.params.id,
-    {
-      name,
-      email,
-      password
-    },
-    {
-      new: true,
-    },
-    (err, data) => {
-      if (err) return res.json({ success: false, message: err })
-      if (!data) return res.json({succes: false, message: "Not Found"})
-  
-      res.json({ succes: true,data: data })
-    })
+    {...req.body.newData},
+    { new: true },
+    (err, data) => sendResponse(res, err, data)
+  )
 })
 // DELETE
 .delete((req,res)=>{
   User.findByIdAndDelete(
     req.params.id,
-    (err, data) => {
-      if (err) return res.json({ success: false, message: err })
-      if (!data) return res.json({succes: false, message: "Not Found"})
-  
-      res.json({ succes: true,data: data })
-    }
+    (err, data) => sendResponse(res, err, data)
   )
 })

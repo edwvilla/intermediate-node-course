@@ -15,13 +15,31 @@ app.listen(port, ()=>{
 
 // CREATE
 app.post('/users',(req,res)=>{
-  // User.create()
+  const { name, email, password } = req.body.newData
+  User.create(
+    {
+      name,
+      email,
+      password
+    },
+    (err, data) => {
+      if (err) return res.json({success: false, message: err})
+      if (!data) return res.json({succes: false, data: "Not Found"})
+
+      res.json({succes: true, data: data})  
+    }
+  )
 })
 
 app.route('/users/:id')
 // READ
 .get((req,res)=>{
-  // User.findById()
+  User.findById(req.params.id, (err, data) => {
+    if (err) return res.json({ success: false, message: err })
+    if (!data) return res.json({succes: false, message: "Not Found"})
+
+    res.json({ succes: true,data: data })
+  })
 })
 // UPDATE
 .put((req,res)=>{
